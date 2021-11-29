@@ -1,0 +1,2 @@
+# treasure-hunt
+templatki ;(
