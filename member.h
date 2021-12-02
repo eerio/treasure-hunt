@@ -3,6 +3,7 @@
 
 #include <concepts>
 #include <cstdint>
+#include "treasure.h"
 
 template<typename T>
 concept integral = std::integral<T>;
@@ -52,15 +53,26 @@ using Explorer = Adventurer<ValueType, false>
 
 template<T>
   requires integral<T> && n >= 0
-constexpr fib(T n) {
-  return n <= 1 ? n : fib(n - 1) + fib(n - 2);
-}
+consteval fib(T n) {
+  if (n <= 1) return n;
+  
+  T pprev = 0;
+  T prev = 1;
+  for (int i=0; i < n - 1; ++i) {
+    int temp = pprev + prev;
+    pprev = prev;
+    prev = temp;
+  }
+
+  return prev;
+};
 
 template<typename ValueType, std::size_t CompletedExpeditions>
   requires integral<ValueType> && CompletedExpeditions < MAX_EXPEDITIONS
 class Veteran<ValueType, CompletedExpeditions> {
   static constexpr bool isArmed = true;
-  constexpr strength_t strength = fib(CompletedExpeditions);
+  constexpr ValueType totalLoot = 0;
+  constexpr strength_t strength = fib<strength_t>(CompletedExpeditions);
 
   Veteran() {};
 
@@ -75,7 +87,6 @@ class Veteran<ValueType, CompletedExpeditions> {
   }
 
   strength_t get_strength() { return strength; }
-
-}
+};
 
 #endif // MEMBER_H
