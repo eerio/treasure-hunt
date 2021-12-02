@@ -6,33 +6,27 @@
 template<typename T>
 concept integral = std::integral<T>;
 
+
 template<typename ValueType, bool IsTrapped>
   requires integral<ValueType>
 class Treasure {
-
-private:
   ValueType value;
 
 public:
-  explicit Treasure(ValueType value) : value(value) {};
+  static constexpr bool isTrapped = IsTrapped;
 
-  ValueType evaluate() { return value; }
+  constexpr explicit Treasure(ValueType value) : value(value) {};
 
-  ValueType getLoot() {
+  constexpr ValueType evaluate() { return value; }
+
+  constexpr ValueType getLoot() {
       ValueType temp = value;
-      value = 0; // =0? czy to jest ok dla nieznanego typu?
+      value = 0;
       return temp;
   }
-
-  bool isTrapped = IsTrapped; // imo to powinno być static ale kompilator nie pozwala nie wiem czemu :/
 };
 
-/* to mi się nie kompiluje :(
-template<typename ValueType>
-  requires integral<ValueType>
-class Treasure<ValueType, false> : Treasure<ValueType, false> { }; */
-
-template <typename ValueType> // może z tym jakoś nie wiem??
+template <typename ValueType>
 using SafeTreasure = Treasure<ValueType, false>;
 
 template <typename ValueType>
