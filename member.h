@@ -2,32 +2,34 @@
 #define MEMBER_H
 
 #include "treasure.h"
-#include <concepts>
+#include <typeinfo>
 
-template<typename T>
-concept integral = std::integral<T>;
-
-using strength_t = unsigned int; // ?
+using strength_t = unsigned int; // nie wiem czy dobry typ
 static const int MAX_EXPEDITIONS = 25;
 
 template<typename ValueType, bool IsArmed>
   requires integral<ValueType>
 class Adventurer<ValueType, IsArmed> {
+
+private:
     strength_t strength = 0;
     ValueType total_loot = 0;
 
-    Adventurer() = default;
+public:
+    Adventurer() : strength(0) {
+        static_assert(!isArmed);
+    }
 
-    Adventurer(strength_t strength) : strength(strength) {
-        static_assert(armed);
+    explicit Adventurer(strength_t strength) : strength(strength) {
+        static_assert(isArmed);
         static_assert(strength > 0);
     }
 
-    strength_t getStrength() const {
+    [[nodiscard]] strength_t getStrength() const {
         return strength;
     }
 
-    static bool isArmed = IsArmed;
+    bool isArmed = IsArmed; // to też powinno być static :(
 
     void loot(Treasure<ValueType, IsTrapped> &&treasure) {
         static_assert(typeid(ValueType) == typeid(ValueType));
@@ -48,15 +50,15 @@ class Adventurer<ValueType, IsArmed> {
     }
 };
 
-template<typename ValueType, size_t CompletedExpeditions>
-  requires integral<ValueType> && CompletedExpeditions < MAX_EXPEDITIONS
+template<typename ValueType, std::size_t CompletedExpeditions>
+  requires integral<ValueType> && (CompletedExpeditions < MAX_EXPEDITIONS)
 class Veteran<ValueType, CompletedExpeditions>{
-    strength_t strength; // liczba fibanocciego
+    strength_t strength; // liczba fibonacciego
     ValueType total_loot = 0;
 
     Veteran() = default;
 
-    static bool isArmed = true;
+    bool isArmed = true; // to też static :(
 
     void loot(Treasure<ValueType, IsTrapped> &&treasure) {
         static_assert(typeid(ValueType) == typeid(ValueType));
@@ -80,3 +82,5 @@ class Veteran<ValueType, CompletedExpeditions>{
     }
 
 };
+
+#endif //MEMBER_H
