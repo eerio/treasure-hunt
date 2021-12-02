@@ -70,7 +70,7 @@ class Veteran {
   Veteran() {};
 
   void loot(SafeTreasure<ValueType>&& treasure) { totalLoot += treasure.loot(); }
-  void loot(TrappedTreasure<ValueType>&& treasure) { totalLoot += treasure.loot(); }
+  void loot(TrappedTreasure<ValueType>&& treasure) requires (strength > 0) { totalLoot += treasure.loot(); }
 
   ValueType pay() {
     ValueType temp = totalLoot;
