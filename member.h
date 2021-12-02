@@ -1,86 +1,81 @@
 #ifndef MEMBER_H
 #define MEMBER_H
 
-#include "treasure.h"
-#include <typeinfo>
+#include <concepts>
+#include <cstdint>
 
-using strength_t = unsigned int; // nie wiem czy dobry typ
-static const int MAX_EXPEDITIONS = 25;
+template<typename T>
+concept integral = std::integral<T>;
+
+constexpr std::size_t MAX_EXPEDITIONS = 25;
+using strength_t = uint32_t;
+
 
 template<typename ValueType, bool IsArmed>
   requires integral<ValueType>
 class Adventurer<ValueType, IsArmed> {
+  constexpr strength_t strength = 0;
+  constexpr ValueType totalLoot = 0;
+  static constexpr bool isArmed = IsArmed;
 
-private:
-    strength_t strength = 0;
-    ValueType total_loot = 0;
+  void loot(SafeTreasure&& treasure) {
+   totalLoot += treasure.loot();
+  }
 
-public:
-    Adventurer() : strength(0) {
-        static_assert(!isArmed);
-    }
-
-    explicit Adventurer(strength_t strength) : strength(strength) {
-        static_assert(isArmed);
-        static_assert(strength > 0);
-    }
-
-    [[nodiscard]] strength_t getStrength() const {
-        return strength;
-    }
-
-    bool isArmed = IsArmed; // to też powinno być static :(
-
-    void loot(Treasure<ValueType, IsTrapped> &&treasure) {
-        static_assert(typeid(ValueType) == typeid(ValueType));
-        if (IsTrapped) {
-            if (isArmed && strength > 0) {
-                total_loot += treasure.getLoot();
-                strength /= 2;
-            }
-        } else {
-            total_loot += treasure.getLoot();
-        }
-    }
-
-    ValueType pay() {
-        ValueType temp = total_loot;
-        total_loot = 0;
-        return temp;
-    }
+  ValueType pay() {
+    ValueType temp = totalLoot;
+    totalLoot = 0;
+    return temp;
+  }
 };
+
+template<>
+class Adventurer<ValueType, false> : Adventurer<ValueType, IsArmed> {
+  Adventurer() : strength(0) {}
+};
+
+template<>
+class Adventurer<ValueType, true> : Adventurer<ValueType, IsArmed> {
+  Adventurer(strength_t strength) : strength(strength) {}
+
+  [[nodiscard]] strength_t getStrength() { return strength; }
+
+  void loot(TrappedTreasure&& treasure) {
+    static_assert(strength != 0);
+    totalLoot += treasure.loot();
+    strength /= 2
+  }
+};
+
+template<typename ValueType>
+using Explorer = Adventurer<ValueType, false>
+
+template<T>
+  requires integral<T> && n >= 0
+constexpr fib(T n) {
+  return n <= 1 ? n : fib(n - 1) + fib(n - 2);
+}
 
 template<typename ValueType, std::size_t CompletedExpeditions>
-  requires integral<ValueType> && (CompletedExpeditions < MAX_EXPEDITIONS)
-class Veteran<ValueType, CompletedExpeditions>{
-    strength_t strength; // liczba fibonacciego
-    ValueType total_loot = 0;
+  requires integral<ValueType> && CompletedExpeditions < MAX_EXPEDITIONS
+class Veteran<ValueType, CompletedExpeditions> {
+  static constexpr bool isArmed = true;
+  constexpr strength_t strength = fib(CompletedExpeditions);
 
-    Veteran() = default;
+  Veteran() {};
 
-    bool isArmed = true; // to też static :(
+  void loot(Treasure&& treasure) {
+   totalLoot += treasure.loot();
+  }
 
-    void loot(Treasure<ValueType, IsTrapped> &&treasure) {
-        static_assert(typeid(ValueType) == typeid(ValueType));
-        if (IsTrapped) {
-            if (isArmed && strength > 0) {
-                total_loot += treasure.getLoot();
-            }
-        } else {
-            total_loot += treasure.getLoot();
-        }
-    }
+  ValueType pay() {
+    ValueType temp = totalLoot;
+    totalLoot = 0;
+    return temp;
+  }
 
-    ValueType pay() {
-        ValueType temp = total_loot;
-        total_loot = 0;
-        return temp;
-    }
+  strength_t get_strength() { return strength; }
 
-    strength_t getStrength() {
-        return strength;
-    }
+}
 
-};
-
-#endif //MEMBER_H
+#endif // MEMBER_H
