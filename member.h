@@ -14,10 +14,10 @@ template<typename ValueType, bool IsArmed>
 class Adventurer {
   strength_t strength = 0;
   ValueType totalLoot = 0;
-  static constexpr bool isArmed = IsArmed;
 
 public:
   constexpr Adventurer() requires (!IsArmed) = default;
+  static constexpr bool isArmed = IsArmed;
 
   constexpr explicit Adventurer(strength_t strength) requires IsArmed
     : strength(strength) {}
@@ -79,12 +79,12 @@ class Veteran {
     return prev;
   };
 
-  static constexpr bool isArmed = true;
   ValueType totalLoot = 0;
   strength_t strength = fib<strength_t>(static_cast<int>(CompletedExpeditions));
 
 public:
   constexpr Veteran() = default;
+  static constexpr bool isArmed = true;
 
   constexpr void loot(SafeTreasure<ValueType>&& treasure) { totalLoot += treasure.loot(); }
   constexpr void loot(TrappedTreasure<ValueType>&& treasure) requires (strength > 0) { totalLoot += treasure.loot(); }
