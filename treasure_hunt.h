@@ -2,8 +2,7 @@
 #define TREASURE_HUNT_H
 
 #include <type_traits>
-#include "treasure.h"
-
+#include "member.h"
 
 template<typename T>
 concept WithStaticField = requires () {
