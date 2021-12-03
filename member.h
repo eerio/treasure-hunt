@@ -108,7 +108,7 @@ public:
     return temp;
   }
 
-  [[nodiscard]] constexpr strength_t get_strength() const { return strength; }
+  [[nodiscard]] constexpr strength_t getStrength() const { return strength; }
 };
 
 #endif // MEMBER_H
