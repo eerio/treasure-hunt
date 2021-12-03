@@ -10,6 +10,7 @@ template<typename ValueType, bool IsTrapped>
   requires integral<ValueType>
 class Treasure {
     // dlaczego to nie musi być private?
+    // pola sa domyslnie private
   ValueType value;
 
 public:
