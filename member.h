@@ -24,15 +24,12 @@ public:
   
   [[nodiscard]] constexpr strength_t getStrength() const { return strength; }
 
-  // czemu nie sprawdzamy czy typy ValueType są takie same?
-  constexpr void loot(SafeTreasure<ValueType>&& treasure) {
-   totalLoot += treasure.loot();
-  }
-
+  constexpr void loot(SafeTreasure<ValueType>&& treasure) { totalLoot += treasure.loot(); }
   constexpr void loot(TrappedTreasure<ValueType>&& treasure) requires (strength != 0) {
     totalLoot += treasure.loot();
     strength /= 2;
   }
+  constexpr void loot(TrappedTreasure<ValueType>&& treasure) {}
 
   // czemu nie potrzeba dla zwykłego treasure? :o
   // i też czy wystarczy template<bool IsTrapped> i wtedy zawsze ValueType się będą zgadzać?
@@ -88,6 +85,7 @@ public:
 
   constexpr void loot(SafeTreasure<ValueType>&& treasure) { totalLoot += treasure.loot(); }
   constexpr void loot(TrappedTreasure<ValueType>&& treasure) requires (strength > 0) { totalLoot += treasure.loot(); }
+  constexpr void loot(TrappedTreasure<ValueType>&& treasure) {}
 
   // tu też nie potrzeba loota ze zwykłym Treasurem?
   template<typename TreasureValueType, bool IsTrapped>

@@ -34,14 +34,15 @@ public:
   const sideB& b;
 };
 
+
 template <TreasureConcept A, MemberConcept B>
 constexpr void run(Encounter<A, B> encounter) {
-    encounter.a.loot(std::move(encounter.b)); // na grupie pisali żeby dać move xd
+    encounter.b.loot(std::move(encounter.a));
 }
 
 template <MemberConcept A, TreasureConcept B>
 constexpr void run(Encounter<A, B> encounter) {
-    encounter.b.loot(std::move(encounter.a));
+    encounter.a.loot(std::move(encounter.b));
 }
 
 template <MemberConcept A, MemberConcept B>
