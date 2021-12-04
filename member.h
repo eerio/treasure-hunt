@@ -25,25 +25,26 @@ public:
   
   [[nodiscard]] constexpr strength_t getStrength() const { return this->strength; }
 
-  /*
-  constexpr void loot(SafeTreasure<ValueType>&& treasure) { this->totalLoot += treasure.loot(); }
-  constexpr void loot(TrappedTreasure<ValueType>&& treasure) requires (this->strength != 0) {
-    this->totalLoot += treasure.loot();
+  constexpr void loot(SafeTreasure<ValueType>&& treasure) { this->totalLoot += treasure.getLoot(); }
+  constexpr void loot(TrappedTreasure<ValueType>&& treasure) {
+    if (this->strength > 0) {
+      this->totalLoot += treasure.getLoot();
       this->strength /= 2;
+    }
   }
-  constexpr void loot(TrappedTreasure<ValueType>&& treasure) {} */
+  // constexpr void loot(TrappedTreasure<ValueType>&& treasure) {}
 
-  template<bool IsTrapped>
-  constexpr void loot(Treasure<ValueType, IsTrapped> &&treasure) {
-     if (treasure.isTrapped) {
-        if (this->isArmed && this->strength > 0) {
-            this->totalLoot += treasure.getLoot();
-            this->strength /= 2;
-        }
-     } else {
-         this->totalLoot += treasure.getLoot();
-     }
-  }
+  // template<bool IsTrapped>
+  // constexpr void loot(Treasure<ValueType, IsTrapped> &&treasure) {
+  //    if (treasure.isTrapped) {
+  //       if (this->isArmed && this->strength > 0) {
+  //           this->totalLoot += treasure.getLoot();
+  //           this->strength /= 2;
+  //       }
+  //    } else {
+  //        this->totalLoot += treasure.getLoot();
+  //    }
+  // }
 
   constexpr ValueType pay() {
     ValueType temp = this->totalLoot;
@@ -85,20 +86,18 @@ public:
   constexpr Veteran() = default;
   static constexpr const bool isArmed = true;
 
-  // holyGrail() nie przechodził z tymi funkcjami chuj wie czemu
-  /*
   constexpr void loot(SafeTreasure<ValueType>&& treasure) {
-      this->totalLoot += treasure.loot();
+    this->totalLoot += treasure.getLoot();
   }
-  constexpr void loot(TrappedTreasure<ValueType>&& treasure) requires (this->strength > 0) {
-      this->totalLoot += treasure.loot();
+  constexpr void loot(TrappedTreasure<ValueType>&& treasure) {
+    if (this->strength > 0) this->totalLoot += treasure.getLoot();
   }
-  constexpr void loot(TrappedTreasure<ValueType>&& treasure) {} */
+  // constexpr void loot(TrappedTreasure<ValueType>&& treasure) {}
 
-  template<bool isTrapped>
-  constexpr void loot(Treasure<ValueType, isTrapped> &&treasure) {
-      this->totalLoot += treasure.getLoot();
-  }
+  // template<bool isTrapped>
+  // constexpr void loot(Treasure<ValueType, isTrapped> &&treasure) {
+  //     this->totalLoot += treasure.getLoot();
+  // }
 
   constexpr ValueType pay() {
     ValueType temp = this->totalLoot;
