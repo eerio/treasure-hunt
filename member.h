@@ -24,7 +24,7 @@ public:
     : strength(strength) {}
 
   // tutaj nie mzoe byc nodiscard
-  constexpr strength_t getStrength() const { return this->strength; }
+  constexpr strength_t getStrength() const requires IsArmed { return this->strength; }
 
   constexpr void loot(SafeTreasure<ValueType>&& treasure) { this->totalLoot += treasure.getLoot(); }
   constexpr void loot(TrappedTreasure<ValueType>&& treasure) {

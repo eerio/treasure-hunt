@@ -12,27 +12,40 @@ concept TreasureConcept = requires (T t) {
     { Treasure{t} } -> std::same_as<T>;
 };
 
-// - typ `T` udostępnia typ o nazwie `strength_t`,
-
-// - typ `T` ma statyczne pole `isArmed`, którego typ jest konwertowalny do
-//   typu logicznego `bool`,
-
 // - typ `T` definiuje metodę `pay()`, która zwraca obiekt, będący poprawnym
 //   typem wartości skarbu,
 
 // - typ `T` definiuje metodę `loot(treasure)`, gdzie `treasure` jest obiektem
 //   typu `Treasure<V, B>` dla `V` zgodnego z typem zwracanym przez
 //   metodę `pay()` i `B` będącego dowolną wartością logiczną.
+
 template <typename T>
-// concept MemberConcept = std::same_as<T, T>;
-concept MemberConcept = requires (T t) {
-    { typename T::strength_t } -> std::integral;
+concept HasStrengthType = requires (T t) { typename T::strength_t; };
+
+// z Moodle'a
+template <typename T>
+concept HasStaticIsArmed = requires (T t) { [] () constexpr { return T::isArmed; }(); };
+
+template <typename T>
+concept HasPayMethod = requires (T t) { t.pay(); };
+
+template <typename T>
+concept HasLootMethod = requires (T t) {
+    t.loot(Treasure< decltype(t.pay()), false >(0));
+    t.loot(Treasure< decltype(t.pay()), true >(0));
 };
 
-template<typename T>
-concept WithStaticField = requires () {
-     { [] () constexpr { return T::field; }() };
-};
+template <typename T>
+concept MemberConcept = 
+    HasStrengthType<T>
+    && HasStaticIsArmed<T>
+    && HasPayMethod<T>
+    && HasLootMethod<T>;
+
+// template<typename T>
+// concept WithStaticField = requires () {
+//      { [] () constexpr { return T::field; }() };
+// };
 
 template <typename T>
 concept EncounterSide = TreasureConcept<T> || MemberConcept<T>;
