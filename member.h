@@ -2,8 +2,6 @@
 #define MEMBER_H
 
 #include <concepts>
-#include <cstdint>
-#include <typeinfo>
 #include "treasure.h"
 
 constexpr std::size_t MAX_EXPEDITIONS = 25;

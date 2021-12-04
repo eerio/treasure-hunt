@@ -2,10 +2,8 @@
 #define TREASURE_HUNT_H
 
 #include <concepts>
-#include <type_traits>
 #include <algorithm>
 #include "member.h"
-#include "treasure.h"
 
 template <typename T>
 concept TreasureConcept = requires(T t)
