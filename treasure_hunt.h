@@ -41,37 +41,28 @@ constexpr void run(Encounter<A, B> encounter) {
 
 template <MemberConcept A, MemberConcept B>
 requires (!(A::isArmed)) && (!(B::isArmed))
-constexpr void run(Encounter<A, B> encounter) {
-    // po prostu się rozchodzą xd
-}
+constexpr void run(Encounter<A, B> encounter) {}
 
 template <MemberConcept A, MemberConcept B>
 requires A::isArmed && B::isArmed
 constexpr void run(Encounter<A, B> encounter) {
-    // pojedynek, wygrywa go uczestnik o większej sile i zabiera on cały zebrany skarb
-    // przegranemu, w przypadku remisu, gdy uczestnicy mają równe siły, nic się nie dzieje
     if (encounter.first.getStrength() > encounter.second.getStrength()) {
-        // a wygrywa, można stworzyć safe treasure z majątkiem b i a go zlootuje
-        // ale coś się nie da xdd
-        encounter.first.loot(SafeTreasure(encounter.second.pay()));
+        encounter.first.loot(SafeTreasure<decltype(encounter.second.pay())>(encounter.second.pay()));
     } else if (encounter.second.getStrength() > encounter.first.getStrength()) {
-        // b wygrywa, jw
-        encounter.second.loot(SafeTreasure(encounter.first.pay()));
-    } else {
-        //remis
+        encounter.second.loot(SafeTreasure<decltype(encounter.first.pay())>(encounter.first.pay()));
     }
 }
 
 template <MemberConcept A, MemberConcept B>
 requires A::isArmed && (!(B::isArmed))
 constexpr void run(Encounter<A, B> encounter) {
-    encounter.first.loot(SafeTreasure(encounter.second.pay()));
+    encounter.first.loot(SafeTreasure<decltype(encounter.second.pay())>(encounter.second.pay()));
 }
 
 template <MemberConcept A, MemberConcept B>
 requires (!(A::isArmed)) && B::isArmed
 constexpr void run(Encounter<A, B> encounter) {
-    encounter.second.loot(SafeTreasure(encounter.first.pay()));
+    encounter.second.loot(SafeTreasure<decltype(encounter.first.pay())>(encounter.first.pay()));
 }
 
 
