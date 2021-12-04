@@ -9,8 +9,6 @@ concept integral = std::integral<T>;
 template<typename ValueType, bool IsTrapped>
   requires integral<ValueType>
 class Treasure {
-    // dlaczego to nie musi być private?
-    // pola sa domyslnie private
   ValueType value;
 
 public:
@@ -18,11 +16,11 @@ public:
 
   constexpr explicit Treasure(ValueType value) : value(value) {};
 
-  constexpr ValueType evaluate() const { return value; }
+  constexpr ValueType evaluate() const { return this->value; }
 
   constexpr ValueType getLoot() {
-      ValueType temp = value;
-      value = 0;
+      ValueType temp = this->value;
+      this->value = 0;
       return temp;
   }
 };
