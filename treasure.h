@@ -18,7 +18,7 @@ public:
 
   constexpr explicit Treasure(ValueType value) : value(value) {};
 
-  constexpr ValueType evaluate() { return value; }
+  constexpr ValueType evaluate() const { return value; }
 
   constexpr ValueType getLoot() {
       ValueType temp = value;
