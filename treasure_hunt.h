@@ -31,12 +31,12 @@ using Encounter = std::pair<sideA&, sideB&>;
 
 template <TreasureConcept A, MemberConcept B>
 constexpr void run(Encounter<A, B> encounter) {
-    encounter.b.loot(std::move(encounter.a));
+    encounter.second.loot(std::move(encounter.first));
 }
 
 template <MemberConcept A, TreasureConcept B>
 constexpr void run(Encounter<A, B> encounter) {
-    encounter.a.loot(std::move(encounter.b));
+    encounter.first.loot(std::move(encounter.second));
 }
 
 template <MemberConcept A, MemberConcept B>
@@ -50,13 +50,13 @@ requires A::isArmed && B::isArmed
 constexpr void run(Encounter<A, B> encounter) {
     // pojedynek, wygrywa go uczestnik o większej sile i zabiera on cały zebrany skarb
     // przegranemu, w przypadku remisu, gdy uczestnicy mają równe siły, nic się nie dzieje
-    if (encounter.a.getStrength() > encounter.b.getStrength()) {
+    if (encounter.first.getStrength() > encounter.second.getStrength()) {
         // a wygrywa, można stworzyć safe treasure z majątkiem b i a go zlootuje
         // ale coś się nie da xdd
-        encounter.a.loot(SafeTreasure(encounter.b.pay()));
-    } else if (encounter.b.getStrength() > encounter.a.getStrength()) {
+        encounter.first.loot(SafeTreasure(encounter.second.pay()));
+    } else if (encounter.second.getStrength() > encounter.first.getStrength()) {
         // b wygrywa, jw
-        encounter.b.loot(SafeTreasure(encounter.a.pay()));
+        encounter.second.loot(SafeTreasure(encounter.first.pay()));
     } else {
         //remis
     }
@@ -65,13 +65,13 @@ constexpr void run(Encounter<A, B> encounter) {
 template <MemberConcept A, MemberConcept B>
 requires A::isArmed && (!(B::isArmed))
 constexpr void run(Encounter<A, B> encounter) {
-    encounter.a.loot(SafeTreasure(encounter.b.pay()));
+    encounter.first.loot(SafeTreasure(encounter.second.pay()));
 }
 
 template <MemberConcept A, MemberConcept B>
 requires (!(A::isArmed)) && B::isArmed
 constexpr void run(Encounter<A, B> encounter) {
-    encounter.b.loot(SafeTreasure(encounter.a.pay()));
+    encounter.second.loot(SafeTreasure(encounter.first.pay()));
 }
 
 
