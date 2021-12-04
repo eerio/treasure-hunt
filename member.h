@@ -25,6 +25,7 @@ public:
       : strength(strength) {}
 
   // tutaj nie mzoe byc nodiscard
+  // clang tidy mówi że tak xd
   constexpr strength_t getStrength() const requires IsArmed { return this->strength; }
 
   constexpr void loot(SafeTreasure<ValueType> &&treasure) { this->totalLoot += treasure.getLoot(); }

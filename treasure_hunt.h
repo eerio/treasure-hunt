@@ -63,10 +63,12 @@ constexpr void run(Encounter<A, B> encounter)
 }
 
 template <MemberConcept A, MemberConcept B>
-requires(!(A::isArmed)) && (!(B::isArmed)) constexpr void run(Encounter<A, B> encounter) {}
+requires (!(A::isArmed)) && (!(B::isArmed))
+constexpr void run(Encounter<A, B> encounter) {}
 
 template <MemberConcept A, MemberConcept B>
-requires A::isArmed && B::isArmed constexpr void run(Encounter<A, B> encounter)
+requires A::isArmed && B::isArmed
+constexpr void run(Encounter<A, B> encounter)
 {
   if (encounter.first.getStrength() > encounter.second.getStrength())
   {
@@ -79,14 +81,15 @@ requires A::isArmed && B::isArmed constexpr void run(Encounter<A, B> encounter)
 }
 
 template <MemberConcept A, MemberConcept B>
-requires A::isArmed &&(!(B::isArmed)) constexpr void run(Encounter<A, B> encounter)
+requires A::isArmed &&(!(B::isArmed))
+constexpr void run(Encounter<A, B> encounter)
 {
   encounter.first.loot(SafeTreasure<decltype(encounter.second.pay())>(encounter.second.pay()));
 }
 
 template <MemberConcept A, MemberConcept B>
-requires(!(A::isArmed)) && B::isArmed
-  constexpr void run(Encounter<A, B> encounter)
+requires (!(A::isArmed)) && B::isArmed
+constexpr void run(Encounter<A, B> encounter)
 {
   encounter.second.loot(SafeTreasure<decltype(encounter.first.pay())>(encounter.first.pay()));
 }
