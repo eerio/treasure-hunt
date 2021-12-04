@@ -96,12 +96,9 @@ constexpr void run(Encounter<A, B> encounter)
   encounter.second.loot(SafeTreasure<decltype(encounter.first.pay())>(encounter.first.pay()));
 }
 
-// https://en.cppreference.com/w/cpp/language/fold
-// tam na dole jest przyklad printer() ktory robi to wlasnie tak
 template <typename... Ts>
 constexpr void expedition(Ts &&...encounters)
 {
-  // https://stackoverflow.com/questions/34314193/iterating-over-different-types
   (run(encounters), ...);
 }
 
