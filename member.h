@@ -22,8 +22,9 @@ public:
 
   constexpr explicit Adventurer(strength_t strength) requires IsArmed
     : strength(strength) {}
-  
-  [[nodiscard]] constexpr strength_t getStrength() const { return this->strength; }
+
+  // tutaj nie mzoe byc nodiscard
+  constexpr strength_t getStrength() const { return this->strength; }
 
   constexpr void loot(SafeTreasure<ValueType>&& treasure) { this->totalLoot += treasure.getLoot(); }
   constexpr void loot(TrappedTreasure<ValueType>&& treasure) {
