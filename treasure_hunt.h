@@ -12,11 +12,22 @@ concept TreasureConcept = requires (T t) {
     { Treasure{t} } -> std::same_as<T>;
 };
 
+// - typ `T` udostępnia typ o nazwie `strength_t`,
+
+// - typ `T` ma statyczne pole `isArmed`, którego typ jest konwertowalny do
+//   typu logicznego `bool`,
+
+// - typ `T` definiuje metodę `pay()`, która zwraca obiekt, będący poprawnym
+//   typem wartości skarbu,
+
+// - typ `T` definiuje metodę `loot(treasure)`, gdzie `treasure` jest obiektem
+//   typu `Treasure<V, B>` dla `V` zgodnego z typem zwracanym przez
+//   metodę `pay()` i `B` będącego dowolną wartością logiczną.
 template <typename T>
-concept MemberConcept = std::same_as<T, T>;
-// concept MemberConcept = requires (T t) {
-//     // { T::strength_t } -> std::integral;
-// };
+// concept MemberConcept = std::same_as<T, T>;
+concept MemberConcept = requires (T t) {
+    { typename T::strength_t } -> std::integral;
+};
 
 template<typename T>
 concept WithStaticField = requires () {
