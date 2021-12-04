@@ -7,14 +7,15 @@
 #include "treasure.h"
 
 constexpr std::size_t MAX_EXPEDITIONS = 25;
-using strength_t = uint32_t;
 
 template<typename ValueType, bool IsArmed>
   requires integral<ValueType> 
 class Adventurer {
+public:
+  using strength_t = uint32_t;
+private:
   strength_t strength = 0;
   ValueType totalLoot = 0;
-
 public:
   constexpr Adventurer() requires (!IsArmed) = default;
   static constexpr bool isArmed = IsArmed;
@@ -22,14 +23,16 @@ public:
   constexpr explicit Adventurer(strength_t strength) requires IsArmed
     : strength(strength) {}
   
-  [[nodiscard]] constexpr strength_t getStrength() const { return strength; }
+  constexpr strength_t getStrength() const { return strength; }
 
-  constexpr void loot(SafeTreasure<ValueType>&& treasure) { totalLoot += treasure.loot(); }
-  constexpr void loot(TrappedTreasure<ValueType>&& treasure) requires (strength != 0) {
-    totalLoot += treasure.loot();
-    strength /= 2;
+  constexpr void loot(const SafeTreasure<ValueType>&& treasure) { totalLoot += treasure.loot(); }
+  constexpr void loot(const TrappedTreasure<ValueType>&& treasure) {
+    if (strength > 0) {
+      totalLoot += treasure.loot();
+      strength /= 2;
+    }
   }
-  constexpr void loot(TrappedTreasure<ValueType>&& treasure) {}
+  // constexpr void loot(TrappedTreasure<ValueType>&& treasure) {}
 
   // czemu nie potrzeba dla zwykłego treasure? :o
   // i też czy wystarczy template<bool IsTrapped> i wtedy zawsze ValueType się będą zgadzać?
@@ -59,6 +62,9 @@ using Explorer = Adventurer<ValueType, false>;
 template<typename ValueType, std::size_t CompletedExpeditions>
   requires integral<ValueType> && (CompletedExpeditions < MAX_EXPEDITIONS)
 class Veteran {
+public:
+  using strength_t = uint32_t;
+private:
   template<typename T>
     requires integral<T>
   static constexpr T fib(int n) { // gdy tu jest consteval zamiast constexpr to hunt_examples.cc narzeka
