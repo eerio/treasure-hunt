@@ -26,14 +26,8 @@ concept WithStaticField = requires () {
 template <typename T>
 concept EncounterSide = TreasureConcept<T> || MemberConcept<T>;
 
-template <typename sideA, typename sideB>
-  requires EncounterSide<sideA> && EncounterSide<sideB>
-class Encounter {
-public:
-  const sideA& a;
-  const sideB& b;
-};
-
+template <EncounterSide sideA, EncounterSide sideB>
+using Encounter = std::pair<sideA&, sideB&>;
 
 template <TreasureConcept A, MemberConcept B>
 constexpr void run(Encounter<A, B> encounter) {
