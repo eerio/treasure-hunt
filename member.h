@@ -64,7 +64,8 @@ template <typename ValueType>
 using Explorer = Adventurer<ValueType, false>;
 
 template <typename ValueType, std::size_t CompletedExpeditions>
-requires integral<ValueType> &&(CompletedExpeditions < MAX_EXPEDITIONS) class Veteran
+requires integral<ValueType> &&(CompletedExpeditions < MAX_EXPEDITIONS)
+class Veteran
 {
 public:
   using strength_t = uint32_t;
