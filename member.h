@@ -2,6 +2,7 @@
 #define MEMBER_H
 
 #include <concepts>
+#include <cstdint>
 #include "treasure.h"
 
 constexpr std::size_t MAX_EXPEDITIONS = 25;
@@ -24,8 +25,6 @@ public:
   constexpr explicit Adventurer(strength_t strength) requires IsArmed
       : strength(strength) {}
 
-  // tutaj nie mzoe byc nodiscard
-  // clang tidy mówi że tak xd
   constexpr strength_t getStrength() const requires IsArmed { return this->strength; }
 
   constexpr void loot(SafeTreasure<ValueType> &&treasure) { this->totalLoot += treasure.getLoot(); }
@@ -37,19 +36,6 @@ public:
       this->strength /= 2;
     }
   }
-  // constexpr void loot(TrappedTreasure<ValueType>&& treasure) {}
-
-  // template<bool IsTrapped>
-  // constexpr void loot(Treasure<ValueType, IsTrapped> &&treasure) {
-  //    if (treasure.isTrapped) {
-  //       if (this->isArmed && this->strength > 0) {
-  //           this->totalLoot += treasure.getLoot();
-  //           this->strength /= 2;
-  //       }
-  //    } else {
-  //        this->totalLoot += treasure.getLoot();
-  //    }
-  // }
 
   constexpr ValueType pay()
   {
@@ -73,10 +59,8 @@ private:
   template <typename T>
   requires integral<T>
   static constexpr T fib(int n)
-  { // gdy tu jest consteval zamiast constexpr to hunt_examples.cc narzeka
-    // static_assert(n >= 0); // to nie dziala, bo ta funkcja moze dzialac w runtime
-    if (n <= 1)
-      return n;
+  {
+    if (n <= 1) { return n; }
 
     T pprev = 0;
     T prev = 1;
@@ -101,17 +85,12 @@ public:
   {
     this->totalLoot += treasure.getLoot();
   }
+
   constexpr void loot(TrappedTreasure<ValueType> &&treasure)
   {
     if (this->strength > 0)
       this->totalLoot += treasure.getLoot();
   }
-  // constexpr void loot(TrappedTreasure<ValueType>&& treasure) {}
-
-  // template<bool isTrapped>
-  // constexpr void loot(Treasure<ValueType, isTrapped> &&treasure) {
-  //     this->totalLoot += treasure.getLoot();
-  // }
 
   constexpr ValueType pay()
   {

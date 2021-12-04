@@ -10,7 +10,6 @@ template <typename ValueType, bool IsTrapped>
 requires integral<ValueType>
 class Treasure
 {
-private:
   ValueType value;
 
 public:

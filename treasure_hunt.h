@@ -2,8 +2,10 @@
 #define TREASURE_HUNT_H
 
 #include <concepts>
+#include <type_traits>
 #include <algorithm>
 #include "member.h"
+#include "treasure.h"
 
 template <typename T>
 concept TreasureConcept = requires(T t)
@@ -63,7 +65,7 @@ constexpr void run(Encounter<A, B> encounter)
 }
 
 template <MemberConcept A, MemberConcept B>
-requires (!(A::isArmed)) && (!(B::isArmed))
+requires(!(A::isArmed)) && (!(B::isArmed))
 constexpr void run(Encounter<A, B> encounter) {}
 
 template <MemberConcept A, MemberConcept B>
@@ -88,14 +90,14 @@ constexpr void run(Encounter<A, B> encounter)
 }
 
 template <MemberConcept A, MemberConcept B>
-requires (!(A::isArmed)) && B::isArmed
+requires(!(A::isArmed)) && B::isArmed
 constexpr void run(Encounter<A, B> encounter)
 {
   encounter.second.loot(SafeTreasure<decltype(encounter.first.pay())>(encounter.first.pay()));
 }
 
 // https://en.cppreference.com/w/cpp/language/fold
-// tam na dole jest przyklad printer() ktory robi to wlasnie tak, wiec powinno dzialac kiedys
+// tam na dole jest przyklad printer() ktory robi to wlasnie tak
 template <typename... Ts>
 constexpr void expedition(Ts &&...encounters)
 {
