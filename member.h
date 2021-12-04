@@ -17,38 +17,36 @@ class Adventurer {
 
 public:
   constexpr Adventurer() requires (!IsArmed) = default;
-  static constexpr bool isArmed = IsArmed;
+  static constexpr const bool isArmed = IsArmed;
 
   constexpr explicit Adventurer(strength_t strength) requires IsArmed
     : strength(strength) {}
   
-  [[nodiscard]] constexpr strength_t getStrength() const { return strength; }
+  [[nodiscard]] constexpr strength_t getStrength() const { return this->strength; }
 
-  constexpr void loot(SafeTreasure<ValueType>&& treasure) { totalLoot += treasure.loot(); }
-  constexpr void loot(TrappedTreasure<ValueType>&& treasure) requires (strength != 0) {
-    totalLoot += treasure.loot();
-    strength /= 2;
+  /*
+  constexpr void loot(SafeTreasure<ValueType>&& treasure) { this->totalLoot += treasure.loot(); }
+  constexpr void loot(TrappedTreasure<ValueType>&& treasure) requires (this->strength != 0) {
+    this->totalLoot += treasure.loot();
+      this->strength /= 2;
   }
-  constexpr void loot(TrappedTreasure<ValueType>&& treasure) {}
+  constexpr void loot(TrappedTreasure<ValueType>&& treasure) {} */
 
-  // czemu nie potrzeba dla zwykłego treasure? :o
-  // i też czy wystarczy template<bool IsTrapped> i wtedy zawsze ValueType się będą zgadzać?
-  template<typename TreasureValueType, bool IsTrapped>
-  constexpr void loot(Treasure<TreasureValueType, IsTrapped> &&treasure) {
-     static_assert(typeid(ValueType) == typeid(TreasureValueType));
-     if (IsTrapped) {
-        if (isArmed && strength > 0) {
-            totalLoot += treasure.getLoot();
-            strength /= 2;
+  template<bool IsTrapped>
+  constexpr void loot(Treasure<ValueType, IsTrapped> &&treasure) {
+     if (treasure.isTrapped) {
+        if (this->isArmed && this->strength > 0) {
+            this->totalLoot += treasure.getLoot();
+            this->strength /= 2;
         }
      } else {
-        totalLoot += treasure.getLoot();
+         this->totalLoot += treasure.getLoot();
      }
   }
 
   constexpr ValueType pay() {
-    ValueType temp = totalLoot;
-    totalLoot = 0;
+    ValueType temp = this->totalLoot;
+    this->totalLoot = 0;
     return temp;
   }
 };
@@ -81,32 +79,30 @@ class Veteran {
 
 public:
   constexpr Veteran() = default;
-  static constexpr bool isArmed = true;
+  static constexpr const bool isArmed = true;
 
-  constexpr void loot(SafeTreasure<ValueType>&& treasure) { totalLoot += treasure.loot(); }
-  constexpr void loot(TrappedTreasure<ValueType>&& treasure) requires (strength > 0) { totalLoot += treasure.loot(); }
-  constexpr void loot(TrappedTreasure<ValueType>&& treasure) {}
+  // holyGrail() nie przechodził z tymi funkcjami chuj wie czemu
+  /*
+  constexpr void loot(SafeTreasure<ValueType>&& treasure) {
+      this->totalLoot += treasure.loot();
+  }
+  constexpr void loot(TrappedTreasure<ValueType>&& treasure) requires (this->strength > 0) {
+      this->totalLoot += treasure.loot();
+  }
+  constexpr void loot(TrappedTreasure<ValueType>&& treasure) {} */
 
-  // tu też nie potrzeba loota ze zwykłym Treasurem?
-  template<typename TreasureValueType, bool IsTrapped>
-  constexpr void loot(Treasure<ValueType, IsTrapped> &&treasure) {
-      static_assert(typeid(ValueType) == typeid(ValueType));
-      if (IsTrapped) {
-          if (strength > 0) {
-              totalLoot += treasure.getLoot();
-          }
-      } else {
-          totalLoot += treasure.getLoot();
-      }
+  template<bool isTrapped>
+  constexpr void loot(Treasure<ValueType, isTrapped> &&treasure) {
+      this->totalLoot += treasure.getLoot();
   }
 
   constexpr ValueType pay() {
-    ValueType temp = totalLoot;
-    totalLoot = 0;
+    ValueType temp = this->totalLoot;
+    this->totalLoot = 0;
     return temp;
   }
 
-  [[nodiscard]] constexpr strength_t getStrength() const { return strength; }
+  [[nodiscard]] constexpr strength_t getStrength() const { return this->strength; }
 };
 
 #endif // MEMBER_H
